@@ -1,6 +1,6 @@
 # dnschanged
 
-Work in progress! - a system that monitors DNS updates
+Work in progress! - a system that monitors DNS updates based on the mean.io stack
 
 ## License
 (The MIT License)

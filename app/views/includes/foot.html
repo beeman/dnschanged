@@ -1,3 +1,6 @@
+<!-- socket.io -->
+<script type="text/javascript" , src="/lib/socket.io-client/dist/socket.io.js"></script>
+
 <!-- Angular JS -->
 <script type="text/javascript" src="/lib/angular/angular.min.js"></script>
 <script type="text/javascript" src="/lib/angular-cookies/angular-cookies.min.js"></script>
@@ -27,8 +30,20 @@
 <script type="text/javascript" src="/js/controllers/header.js"></script>
 <script type="text/javascript" src="/js/init.js"></script>
 
+<!-- Socket test -->
+<script type="text/javascript" src="/js/socket.js"></script>
+
+<script>
+    var socket = io.connect('http://localhost:9000/');
+      socket.on('news', function (data) {
+//        alert(data.message);
+        console.log(data.message);
+        socket.emit('my other event', { my: 'data' });
+      });
+</script>
+
 
 {% if (process.env.NODE_ENV == 'development') %}
-    <!-- Livereload script rendered -->
-    <script type="text/javascript", src="http://" + req.host + ":35729/livereload.js"></script>
+<!-- Livereload script rendered -->
+<script type="text/javascript" , src="http://{{req.host}}:35729/livereload.js"></script>
 {% endif %}
