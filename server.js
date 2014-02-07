@@ -8,6 +8,11 @@ var express = require('express'),
     passport = require('passport'),
     logger = require('mean-logger');
 
+var app = express(),
+    http = require('http'),
+    server = http.createServer(app),
+    io = require('socket.io').listen(server);
+
 /**
  * Main application entry file.
  * Please note that the order of loading is important.
@@ -44,13 +49,6 @@ walk(models_path);
 // Bootstrap passport config
 require('./config/passport')(passport);
 
-
-
-
-var app = express();
-var io = require('socket.io').listen(app);
-
-
 // Express settings
 require('./config/express')(app, passport, db);
 
@@ -75,10 +73,70 @@ var walk = function (path) {
 };
 walk(routes_path);
 
-
 // Start the app by listening on <port>
 var port = process.env.PORT || config.port;
-app.listen(port);
+
+
+// export function for listening to the socket
+module.exports = function (socket) {
+    var name = userNames.getGuestName();
+
+    // send the new user their name and a list of users
+    socket.emit('init', {
+        name: name,
+        users: userNames.get()
+    });
+
+    // notify other clients that a new user has joined
+    socket.broadcast.emit('user:join', {
+        name: name
+    });
+
+    // broadcast a user's message to other users
+    socket.on('send:message', function (data) {
+        socket.broadcast.emit('send:message', {
+            user: name,
+            text: data.message
+        });
+    });
+
+    // validate a user's name change, and broadcast it on success
+    socket.on('change:name', function (data, fn) {
+        if (userNames.claim(data.name)) {
+            var oldName = name;
+            userNames.free(oldName);
+
+            name = data.name;
+
+            socket.broadcast.emit('change:name', {
+                oldName: oldName,
+                newName: name
+            });
+
+            fn(true);
+        } else {
+            fn(false);
+        }
+    });
+
+    // clean up when a user leaves, and broadcast it to other users
+    socket.on('disconnect', function () {
+        socket.broadcast.emit('user:left', {
+            name: name
+        });
+        userNames.free(name);
+    });
+};
+
+var socket = require('./socket.js');
+
+io.sockets.on('connection', socket);
+
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+
+
+server.listen(port);
+
 console.log('Express app started on port ' + port);
 
 // Initializing logger
@@ -87,14 +145,15 @@ logger.init(app, passport, mongoose);
 // Expose app
 exports = module.exports = app;
 
-//var io = require('socket.io').listen(app);
-//var io = require('socket.io').listen(9000);
 
-io.sockets.on('connection', function (socket) {
-    socket.emit('news', {
-        message: 'Hello from socket.io!'
-    });
-    socket.on('my other event', function (data) {
-        console.log(data);
-    });
-});
+
+//
+//
+//io.sockets.on('connection', function (socket) {
+//    socket.emit('news', {
+//        message: 'Hello from socket.io!'
+//    });
+//    socket.on('my other event', function (data) {
+//        console.log(data);
+//    });
+//});

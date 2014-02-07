@@ -1,3 +1,47 @@
 <section data-ng-controller="IndexController">
-    <h1>This is the home view :)</h1>
+
+    <div class="row">
+        <div class="col-md-offset-1 col-md-7">
+            <form ng-submit="sendMessage()" class="form-horizontal ng-pristine ng-valid">
+                <input size="60" ng-model="message" class="ng-pristine ng-valid" class="form-control">
+                <input type="submit" value="Send" class="btn btn-primary">
+            </form>
+            <br />
+        </div>
+        <div class="col-md-4">
+            <form ng-submit="changeName()" class="form-horizontal ng-pristine ng-valid">
+                <input ng-model="newName" class="ng-pristine ng-valid" value="{{name}}">
+                <input type="submit" value="Change Name"  class="btn btn-primary" >
+                <p class="ng-binding pull-right"><b>{{name}}</b></p>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="well overflowable">
+                <p ng-repeat="message in messages" 
+                   ng-class='{alert: message.user == "chatroom"}' 
+                   class="ng-scope ng-binding">{{message.user}}:  {{message.text}}</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="well overflowable">
+                <p ng-repeat="user in users" class="ng-scope ng-binding">{{user}}</p>
+            </div>
+        </div>
+    </div>
 </section>
+
+<style>
+    .overflowable {
+          height: 240px;
+          overflow-y: auto;
+/*          border: 1px solid #000;*/
+        }
+        
+        .overflowable p {
+          margin: 0;
+        }
+</style>
