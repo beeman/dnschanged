@@ -1,0 +1,12 @@
+<section data-ng-controller="UsersController" data-ng-init="find()">
+	<ul class="users list-unstyled">
+		<li data-ng-repeat="user in users">
+			<h2>
+                <a data-ng-href="#!/users/{{user._id}}">{{user.name}}</a>
+                <small>{{user.username}}</small>
+            </h2>
+			<div>{{user.email}}</div>
+		</li>
+	</ul>
+	<h1 data-ng-hide="!users || users.length">No users found. <br> Why don't you <a href="/#!/users/create">Create One</a>?</h1>
+</section>

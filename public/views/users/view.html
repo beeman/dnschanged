@@ -1,0 +1,20 @@
+<section data-ng-controller="UsersController" data-ng-init="findOne()">
+    <h2>
+        <a class="btn btn-default" href="/#!/users">
+        	<i class="glyphicon glyphicon-arrow-left"></i>
+        </a>
+        {{user.name}} 
+        <small>{{user.username}}</small>
+        <div class="pull-right" data-ng-show="global.user._id == user._id">
+            <a class="btn btn-default" href="/#!/users/{{user._id}}/edit">
+                <i class="glyphicon glyphicon-edit"></i>
+            </a>
+            <a class="btn btn-default" data-ng-click="remove();">
+                <i class="glyphicon glyphicon-trash"></i>
+            </a>
+        </div>
+    </h2>
+
+    <pre>{{user | json}}</pre>
+    <div>{{user.content}}</div>
+</section>
