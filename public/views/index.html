@@ -1,47 +1,80 @@
 <section data-ng-controller="IndexController">
-
     <div class="row">
-        <div class="col-md-offset-1 col-md-7">
+        <div class="col-md-10">
+            <ul class='overflowable chatscreen list-unstyled'>
+                <li ng-repeat="message in messages" ng-class='{"chatroom text-muted": message.user == "chatroom"}' class="ng-scope ng-binding chatmsg">
+                    <span>{{message.user}}</span>{{message.text}}
+                </li>
+                <ul id='last'>&nbsp;</ul>
+            </ul>
+        </div>
+        <div class="col-md-2">
+            <ul class="list-unstyled">
+                <li class='indicator' ng-class='{"alert alert-success": status == "online"}'>
+                    <b class="ng-binding">{{name}}</b>
+                    <small class="ng-binding {{status}}">{{status}}</small>
+                </li>
+            </ul>
+            <div class="userlist">
+                <ul class="list-unstyled chatscreen ">
+                    <li ng-repeat="user in users | orderBy:user" class="ng-scope ng-binding" ng-if="user != name">{{user}}</li>
+                </ul>
+                <form ng-submit="changeName()" class="form-horizontal ng-pristine ng-valid">
+                    <input ng-disabled="status == 'offline'" ng-model="newName" class="ng-pristine ng-valid form-control" placeholder="Change name">
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10">
             <form ng-submit="sendMessage()" class="form-horizontal ng-pristine ng-valid">
-                <input size="60" ng-model="message" class="ng-pristine ng-valid" class="form-control">
-                <input type="submit" value="Send" class="btn btn-primary">
-            </form>
-            <br />
-        </div>
-        <div class="col-md-4">
-            <form ng-submit="changeName()" class="form-horizontal ng-pristine ng-valid">
-                <input ng-model="newName" class="ng-pristine ng-valid" value="{{name}}">
-                <input type="submit" value="Change Name"  class="btn btn-primary" >
-                <p class="ng-binding pull-right"><b>{{name}}</b></p>
+                <div>
+                    <input ng-disabled="status == 'offline'" ng-model="message" class="form-control ng-pristine ng-valid form-control" placeholder="Enter your message">
+                </div>
             </form>
         </div>
-    </div>
-    <div class="row">
-    </div>
-    <div class="row">
-        <div class="col-md-8">
-            <div class="well overflowable">
-                <p ng-repeat="message in messages" 
-                   ng-class='{alert: message.user == "chatroom"}' 
-                   class="ng-scope ng-binding">{{message.user}}:  {{message.text}}</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="well overflowable">
-                <p ng-repeat="user in users" class="ng-scope ng-binding">{{user}}</p>
-            </div>
+        <div class="col-md-2">
         </div>
     </div>
 </section>
 
 <style>
     .overflowable {
-          height: 240px;
-          overflow-y: auto;
-/*          border: 1px solid #000;*/
-        }
-        
-        .overflowable p {
-          margin: 0;
-        }
+      height: 400px;
+      overflow-y: auto;
+    }        
+    .overflowable p {
+      margin: 0;
+    }
+    .chatscreen {
+        display: block;
+        padding: 9.5px;
+        margin: 0 0 10px;
+        font-size: 13px;
+        line-height: 1.428571429;
+        color: #333;
+        word-break: break-all;
+        word-wrap: break-word;
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        border-radius: 4px;   
+        font-family: monospace;
+    }
+    .chatmsg span {
+        width:100px;
+        display:block;
+        float:left;
+        text-align: right;
+        margin-right: 5px;
+        padding-right: 5px;
+        border-right: 1px solid #919191;
+            
+    }
+    .chatroom span {
+        font-weight:bold;
+    }
+    .alert-success.indicator {
+        padding: 8px;
+        margin: 0px;
+    }
 </style>

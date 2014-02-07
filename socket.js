@@ -20,6 +20,7 @@ var userNames = (function () {
             name = 'Guest ' + nextUserId;
             nextUserId += 1;
         } while (!claim(name));
+
         return name;
     };
 
@@ -47,16 +48,42 @@ var userNames = (function () {
     };
 }());
 
+// Keep track of the messages
+var userMessages = (function () {
+    var messages = [];
+
+    var set = function (message) {
+        messages.push(message);
+        console.log(messages);
+    };
+
+    // serialize claimed names as an array
+    var get = function () {
+        console.log(messages);
+        var res = [];
+        for (message in messages) {
+            res.push(message);
+        }
+        return res;
+    };
+
+    return {
+        set: set,
+        get: get
+    };
+}());
 
 
 // export function for listening to the socket
 module.exports = function (socket) {
     var name = userNames.getGuestName();
-
+//    var messages = userMessages.get();
+    
     // send the new user their name and a list of users
     socket.emit('init', {
         name: name,
-        users: userNames.get()
+        users: userNames.get(),
+        messages: userMessages.get()
     });
 
     // notify other clients that a new user has joined
@@ -66,10 +93,12 @@ module.exports = function (socket) {
 
     // broadcast a user's message to other users
     socket.on('send:message', function (data) {
-        socket.broadcast.emit('send:message', {
+        var msg = {
             user: name,
             text: data.message
-        });
+        };
+        userMessages.set(msg);
+        socket.broadcast.emit('send:message', msg);
     });
 
     // validate a user's name change, and broadcast it on success
